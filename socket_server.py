@@ -7,7 +7,6 @@ from util import cpu, memory, uptime, network
 app = Flask(__name__)
 socketio = SocketIO(app, cors_allowed_origins="*")
 thread = Thread()
-app.config['SECRET_KEY'] = 'vnkdjnfjknfl1232#'
 thread_reset_timeout_event = Event()
 
 
