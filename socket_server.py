@@ -5,7 +5,7 @@ from threading import Thread, Event
 from util import cpu, memory, uptime, network
 
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, cors_allowed_origins=["https://kennedn.com", "http://thinboy.int", "http://127.0.0.1"])
 thread = Thread()
 thread_reset_timeout_event = Event()
 
@@ -35,7 +35,6 @@ def count_until_timeout(timeout=10, delay=1):
                        'upload_h': net_stats[5]}
 
         socketio.emit('response', status_data, broadcast=True)
-        print(status_data)
         countdown -= delay
         socketio.sleep(delay)
 
@@ -59,4 +58,4 @@ def reset_timer():
 
 
 if __name__ == '__main__':
-    socketio.run(app, host='0.0.0.0', port=5000)
+    socketio.run(app)
