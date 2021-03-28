@@ -11,10 +11,12 @@ thread_reset_timeout_event = Event()
 
 
 def count_until_timeout(timeout=10, delay=1):
+    runtime = 0
     countdown = timeout
     net_stats = (0, 0, 0, 0)
     while True:
         if countdown == 0:
+            print("Stopping response thread (Ran for {}s)".format(runtime))
             return
         if thread_reset_timeout_event.is_set():
             thread_reset_timeout_event.clear()
@@ -36,6 +38,7 @@ def count_until_timeout(timeout=10, delay=1):
 
         socketio.emit('response', status_data, broadcast=True)
         countdown -= delay
+        runtime += delay
         socketio.sleep(delay)
 
 
@@ -43,7 +46,7 @@ def count_until_timeout(timeout=10, delay=1):
 def timer():
     global thread
     if not thread.is_alive():
-        print("Starting thread")
+        print("Starting response thread")
         thread = socketio.start_background_task(count_until_timeout)
 
 
@@ -53,7 +56,7 @@ def reset_timer():
     if thread.is_alive():
         thread_reset_timeout_event.set()
     else:
-        print("Starting thread")
+        print("Starting response thread")
         thread = socketio.start_background_task(count_until_timeout)
 
 
