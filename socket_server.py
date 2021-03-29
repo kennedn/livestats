@@ -15,12 +15,12 @@ def count_until_timeout(timeout=10, delay=1):
     countdown = timeout
     net_stats = (0, 0, 0, 0)
     while True:
-        if countdown == 0:
-            print("Stopping response thread (Ran for {}s)".format(runtime))
-            return
         if thread_reset_timeout_event.is_set():
             thread_reset_timeout_event.clear()
             countdown = timeout
+        if countdown == 0:
+            print("Stopping response thread (Ran for {}s)".format(runtime))
+            return
         net_stats = network.get(net_stats[0], net_stats[1])
 
         cpu_data = cpu.get()
@@ -40,14 +40,6 @@ def count_until_timeout(timeout=10, delay=1):
         countdown -= delay
         runtime += delay
         socketio.sleep(delay)
-
-
-@socketio.on('connect')
-def timer():
-    global thread
-    if not thread.is_alive():
-        print("Starting response thread")
-        thread = socketio.start_background_task(count_until_timeout)
 
 
 @socketio.on('ping')
