@@ -47,3 +47,20 @@ socket.on('response', msg => {
 ```
 
 The server currently emits a response every `1s` in an awakened state, and will timeout if no pings are recieved for `10s`.
+
+# Nginx setup
+
+If running on a webserver, you will need something akin to :
+
+```
+location /socket.io {
+        include proxy_params;
+        proxy_http_version 1.1;
+        proxy_buffering off;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_pass http://127.0.0.1:5000/socket.io;
+  }
+
+```
+In your Nginx configuration to upgrade websocket requests and forward to the service.
