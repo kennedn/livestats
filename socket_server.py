@@ -5,7 +5,7 @@ from threading import Thread, Event
 from util import cpu, memory, uptime, network
 
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins=["https://kennedn.com", "http://thinboy.int", "http://127.0.0.1"])
+socketio = SocketIO(app, cors_allowed_origins=["https://kennedn.com", "https://kennedn.root.sx", "http://thinboy.int", "http://127.0.0.1"])
 thread = Thread()
 thread_reset_timeout_event = Event()
 
