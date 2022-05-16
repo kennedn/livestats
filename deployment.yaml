@@ -1,20 +1,20 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
-  name: socketio
+  name: livestats
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: socketio
+      app: livestats
   template:
     metadata:
       labels:
-        app: socketio
+        app: livestats
     spec:
       containers:
-        - image: quay.io/kennedn/socketio-kubernetes
-          name: socketio-kubernetes
+        - image: quay.io/kennedn/livestats
+          name: livestats
           ports:
             - containerPort: 5000
               protocol: TCP

@@ -5,7 +5,7 @@ from threading import Thread, Event
 from util import kube
 
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins=["*"])
+socketio = SocketIO(app, cors_allowed_origins="*")
 thread = Thread()
 thread_reset_timeout_event = Event()
 

@@ -3,14 +3,13 @@ import json
 from datetime import datetime, timezone
 from math import floor
 
-config.load_incluster_config()
-#try:
-#    config.load_incluster_config()
-#except config.ConfigException:
-#    try:
-#        config.load_kube_config()
-#    except config.ConfigException:
-#        raise Exception("Could not configure kubernetes python client")
+try:
+    config.load_incluster_config()
+except config.ConfigException:
+    try:
+        config.load_kube_config()
+    except config.ConfigException:
+        raise Exception("Could not configure kubernetes python client")
 
 core = client.CoreV1Api()
 default_interface = 'enp0s25'
