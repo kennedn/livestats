@@ -1,0 +1,20 @@
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: socketio
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: socketio
+  template:
+    metadata:
+      labels:
+        app: socketio
+    spec:
+      containers:
+        - image: quay.io/kennedn/socketio-kubernetes
+          name: socketio-kubernetes
+          ports:
+            - containerPort: 5000
+              protocol: TCP

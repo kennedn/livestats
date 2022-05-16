@@ -2,10 +2,10 @@
 from flask import Flask
 from flask_socketio import SocketIO
 from threading import Thread, Event
-from util import cpu, memory, uptime, network
+from util import kube
 
 app = Flask(__name__)
-socketio = SocketIO(app, cors_allowed_origins=["https://kennedn.com", "https://kennedn.root.sx", "http://thinboy.int", "http://127.0.0.1"])
+socketio = SocketIO(app, cors_allowed_origins=["*"])
 thread = Thread()
 thread_reset_timeout_event = Event()
 
@@ -13,7 +13,7 @@ thread_reset_timeout_event = Event()
 def count_until_timeout(timeout=10, delay=1):
     runtime = 0
     countdown = timeout
-    net_stats = (0, 0, 0, 0)
+    last_data = None
     while True:
         if thread_reset_timeout_event.is_set():
             thread_reset_timeout_event.clear()
@@ -21,20 +21,33 @@ def count_until_timeout(timeout=10, delay=1):
         if countdown == 0:
             print("Stopping response thread (Ran for {}s)".format(runtime))
             return
-        net_stats = network.get(net_stats[0], net_stats[1])
+        last_data = kube.get_node_stats(last_data=last_data)
 
-        cpu_data = cpu.get()
-        mem_data = memory.get()
+        status_data = {'cpu': last_data['cpu']['float'],
+                       'cpu_h': last_data['cpu']['str'],
+                       'memory': last_data['memory']['float'],
+                       'memory_h': last_data['memory']['str'],
+                       'uptime': last_data['uptime']['str'],
+                       'download': last_data['network']['download']['float'],
+                       'download_h': last_data['network']['download']['str'],
+                       'upload': last_data['network']['upload']['float'],
+                       'upload_h':last_data['network']['upload']['str']
+                       }
 
-        status_data = {'cpu': cpu_data[0],
-                       'cpu_h': cpu_data[1],
-                       'memory': mem_data[0],
-                       'memory_h': mem_data[1],
-                       'uptime': uptime.get(),
-                       'download': net_stats[2],
-                       'download_h': net_stats[4],
-                       'upload': net_stats[3],
-                       'upload_h': net_stats[5]}
+#        net_stats = network.get(net_stats[0], net_stats[1])
+#
+#        cpu_data = cpu.get()
+#        mem_data = memory.get()
+#
+#        status_data = {'cpu': cpu_data[0],
+#                       'cpu_h': cpu_data[1],
+#                       'memory': mem_data[0],
+#                       'memory_h': mem_data[1],
+#                       'uptime': uptime.get(),
+#                       'download': net_stats[2],
+#                       'download_h': net_stats[4],
+#                       'upload': net_stats[3],
+#                       'upload_h': net_stats[5]}
 
         socketio.emit('response', status_data, broadcast=True)
         countdown -= delay
@@ -53,4 +66,4 @@ def reset_timer():
 
 
 if __name__ == '__main__':
-    socketio.run(app)
+    socketio.run(app, host='0.0.0.0')
