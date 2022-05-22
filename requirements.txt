@@ -1,4 +1,6 @@
 flask
 flask-socketio
 kubernetes
+gevent
+gevent-websocket
 

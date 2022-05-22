@@ -3,10 +3,12 @@ from flask import Flask
 from flask_socketio import SocketIO
 from threading import Thread, Event
 from util import kube
+import logging
 
 app = Flask(__name__)
+app.logger.setLevel(logging.DEBUG)
 socketio = SocketIO(app, cors_allowed_origins="*")
-thread = Thread()
+thread = None
 thread_reset_timeout_event = Event()
 
 
@@ -28,26 +30,13 @@ def count_until_timeout(timeout=10, delay=1):
                        'memory': last_data['memory']['float'],
                        'memory_h': last_data['memory']['str'],
                        'uptime': last_data['uptime']['str'],
+                       'pods': last_data['pods']['str'],
                        'download': last_data['network']['download']['float'],
                        'download_h': last_data['network']['download']['str'],
                        'upload': last_data['network']['upload']['float'],
                        'upload_h':last_data['network']['upload']['str']
                        }
 
-#        net_stats = network.get(net_stats[0], net_stats[1])
-#
-#        cpu_data = cpu.get()
-#        mem_data = memory.get()
-#
-#        status_data = {'cpu': cpu_data[0],
-#                       'cpu_h': cpu_data[1],
-#                       'memory': mem_data[0],
-#                       'memory_h': mem_data[1],
-#                       'uptime': uptime.get(),
-#                       'download': net_stats[2],
-#                       'download_h': net_stats[4],
-#                       'upload': net_stats[3],
-#                       'upload_h': net_stats[5]}
 
         socketio.emit('response', status_data, broadcast=True)
         countdown -= delay
@@ -58,7 +47,7 @@ def count_until_timeout(timeout=10, delay=1):
 @socketio.on('ping')
 def reset_timer():
     global thread
-    if thread.is_alive():
+    if thread is not None and not thread.ready():
         thread_reset_timeout_event.set()
     else:
         print("Starting response thread")

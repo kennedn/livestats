@@ -145,12 +145,15 @@ def get_node_stats(last_data=None, node=None):
         last_data = {}
 
     max_json = json.loads(core.read_node(name=node, _preload_content=False).data)['status']['allocatable']
-    stats_json = json.loads(core.connect_get_node_proxy_with_path(name=node, path='stats/summary', _preload_content=False).data)['node']
+    summary_json = json.loads(core.connect_get_node_proxy_with_path(name=node, path='stats/summary', _preload_content=False).data)
+    stats_json = summary_json['node']
+    
     return {
             "cpu": get_cpu(stats_json, max_json, last_data.get("cpu", None)),
             "memory": get_memory(stats_json, max_json, last_data.get("memory", None)),
             "network": get_network(stats_json, max_json, last_data.get("network", None)),
-            "uptime": get_uptime(stats_json)
+            "uptime": get_uptime(stats_json),
+            "pods": {"str": len([p for p in summary_json['pods'] if p['podRef']['namespace'] == 'default'])}
            }
     
 
