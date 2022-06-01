@@ -156,4 +156,25 @@ def get_node_stats(last_data=None, node=None):
             "pods": {"str": len([p for p in summary_json['pods'] if p['podRef']['namespace'] == 'default'])}
            }
     
+if __name__ == "__main__":
+    from time import sleep
+    last_data = None
+    while True:
+        last_data = get_node_stats(last_data=last_data)
+
+        status_data = {'cpu': last_data['cpu']['float'],
+                       'cpu_h': last_data['cpu']['str'],
+                       'memory': last_data['memory']['float'],
+                       'memory_h': last_data['memory']['str'],
+                       'uptime': last_data['uptime']['str'],
+                       'pods': last_data['pods']['str'],
+                       'download': last_data['network']['download']['float'],
+                       'download_h': last_data['network']['download']['str'],
+                       'upload': last_data['network']['upload']['float'],
+                       'upload_h':last_data['network']['upload']['str']
+                       }
+
+
+        print(json.dumps(status_data, indent=2))
+        sleep(10)
 

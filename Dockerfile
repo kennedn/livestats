@@ -7,5 +7,5 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-CMD [ "python", "./socket_server.py" ]
+CMD [ "python", "-u", "./socket_server.py" ]
 
