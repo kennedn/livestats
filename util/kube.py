@@ -153,7 +153,7 @@ def get_node_stats(last_data=None, node=None):
             "memory": get_memory(stats_json, max_json, last_data.get("memory", None)),
             "network": get_network(stats_json, max_json, last_data.get("network", None)),
             "uptime": get_uptime(stats_json),
-            "pods": {"str": len([p for p in summary_json['pods'] if p['podRef']['namespace'] == 'default'])}
+            "pods": {"str": len([p for p in summary_json['pods'] if p['podRef']['namespace'] == 'default' or p['podRef']['namespace'] == 'vpn'])}
            }
     
 if __name__ == "__main__":
