@@ -42,7 +42,7 @@ A callback can then be set up to receive data from the server on the `response` 
 socket.on('response', msg => {
 	socket.emit('ping')
 	...
-	console.log('msg.cpu_h')
+	console.log(msg.cpu_h)
 }
 ```
 
