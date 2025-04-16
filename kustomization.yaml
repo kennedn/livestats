@@ -1,0 +1,8 @@
+resources:
+  - service.yaml
+  - endpoint.yaml
+
+namespace: default
+commonLabels:
+    app: livestats
+
